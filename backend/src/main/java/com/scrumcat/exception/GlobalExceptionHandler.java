@@ -14,6 +14,11 @@ public class GlobalExceptionHandler {
         return Result.fail("Request validation failed");
     }
 
+    @ExceptionHandler(BusinessException.class)
+    public Result<Void> handleBusinessException(BusinessException exception) {
+        return Result.fail(exception.getCode(), exception.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public Result<Void> handleException(Exception exception) {
         return Result.fail(exception.getMessage());

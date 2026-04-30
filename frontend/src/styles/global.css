@@ -15,6 +15,12 @@ body {
   min-height: 100vh;
 }
 
+button,
+input,
+textarea {
+  font: inherit;
+}
+
 #app {
   min-height: 100vh;
 }
@@ -24,6 +30,26 @@ body {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(247, 244, 239, 0.96)),
     #f7f4ef;
+}
+
+.app-sidebar {
+  min-height: 100vh;
+  background: #ffffff !important;
+  border-right: 1px solid #eadfd2;
+}
+
+.sidebar-brand {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  color: #b06f50;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.sidebar-menu {
+  border-inline-end: 0 !important;
 }
 
 .app-header {
@@ -37,14 +63,16 @@ body {
   border-bottom: 1px solid #eadfd2;
 }
 
-.brand {
-  font-size: 20px;
-  font-weight: 700;
-}
-
 .stage {
   color: #6d7a7a;
   font-size: 14px;
+}
+
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #526061;
 }
 
 .app-content {
@@ -82,4 +110,82 @@ h1 {
   margin: 8px 0 0;
   color: #526061;
   font-size: 16px;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 32px;
+  align-items: center;
+  padding: 48px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 244, 239, 0.94)),
+    #f7f4ef;
+}
+
+.auth-brand {
+  max-width: 620px;
+  padding: 24px;
+}
+
+.auth-brand h1,
+.page-title h1,
+.page-toolbar h1 {
+  margin: 0 0 16px;
+  color: #263238;
+}
+
+.auth-brand p:not(.eyebrow) {
+  color: #526061;
+  font-size: 18px;
+}
+
+.auth-card {
+  width: 100%;
+  padding: 32px;
+  background: #ffffff;
+  border: 1px solid #eadfd2;
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgba(96, 76, 56, 0.08);
+}
+
+.auth-card h2 {
+  margin: 0 0 24px;
+}
+
+.page-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+@media (max-width: 780px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+
+  .app-sidebar {
+    display: none;
+  }
+
+  .app-header {
+    padding: 0 16px;
+  }
+
+  .app-content {
+    padding: 24px 16px;
+  }
+
+  .page-toolbar {
+    flex-direction: column;
+  }
 }
