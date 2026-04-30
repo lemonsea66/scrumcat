@@ -1,0 +1,85 @@
+:root {
+  color: #263238;
+  background: #f7f4ef;
+  font-family:
+    Inter, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(247, 244, 239, 0.96)),
+    #f7f4ef;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 32px;
+  color: #263238;
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid #eadfd2;
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.stage {
+  color: #6d7a7a;
+  font-size: 14px;
+}
+
+.app-content {
+  padding: 48px 24px;
+}
+
+.home-view {
+  display: flex;
+  justify-content: center;
+}
+
+.hero-panel {
+  width: min(720px, 100%);
+  padding: 40px;
+  background: #ffffff;
+  border: 1px solid #eadfd2;
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgba(96, 76, 56, 0.08);
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: #b06f50;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0 0 16px;
+  font-size: 34px;
+  line-height: 1.25;
+}
+
+.summary,
+.cat-note {
+  margin: 8px 0 0;
+  color: #526061;
+  font-size: 16px;
+}
