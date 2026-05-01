@@ -4,7 +4,7 @@
       <div>
         <p class="eyebrow">User Stories</p>
         <h1>用户故事管理</h1>
-        <p class="summary">还没有用户故事时，猫猫在等你的第一个需求。</p>
+        <p class="summary">{{ storySummary }}</p>
       </div>
       <a-button type="primary" @click="openCreateModal">新增用户故事</a-button>
     </div>
@@ -16,6 +16,9 @@
       :pagination="{ pageSize: 8 }"
       row-key="id"
     >
+      <template #emptyText>
+        <div class="story-empty-state">还没有用户故事，猫猫在等你的第一个需求。</div>
+      </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'storyPoint'">
           <a-tag color="blue">{{ record.storyPoint }}</a-tag>
@@ -83,7 +86,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import {
   createStoryApi,
@@ -115,6 +118,13 @@ const form = reactive({
 })
 
 onMounted(loadStories)
+
+const storySummary = computed(() => {
+  if (stories.value.length === 0) {
+    return '还没有用户故事，猫猫在等你的第一个需求。'
+  }
+  return `已整理 ${stories.value.length} 个用户故事，可以继续补充、编辑和调整状态。`
+})
 
 async function loadStories() {
   loading.value = true

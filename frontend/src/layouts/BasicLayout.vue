@@ -3,16 +3,25 @@
     <a-layout-sider class="app-sidebar" width="220">
       <div class="sidebar-brand">ScrumCat</div>
       <a-menu :selectedKeys="[route.path]" mode="inline" class="sidebar-menu">
-        <a-menu-item key="/dashboard" @click="go('/dashboard')">Dashboard</a-menu-item>
+        <a-menu-item key="/dashboard" @click="go('/dashboard')">工作台</a-menu-item>
         <a-menu-item key="/stories" @click="go('/stories')">用户故事</a-menu-item>
+        <a-menu-item key="/backlog" disabled>产品待办</a-menu-item>
+        <a-menu-item key="/sprints" disabled>迭代计划</a-menu-item>
+        <a-menu-item key="/sprint-board" disabled>故事看板</a-menu-item>
+        <a-menu-item key="/task-board" disabled>任务看板</a-menu-item>
+        <a-menu-item key="/analytics" disabled>统计分析</a-menu-item>
+        <a-menu-item key="/review" disabled>复盘中心</a-menu-item>
       </a-menu>
     </a-layout-sider>
     <a-layout>
       <a-layout-header class="app-header">
-        <div class="stage">Milestone 01</div>
+        <div class="stage">
+          <span class="paw-mark" aria-hidden="true"></span>
+          <span>温柔整理每一个 Sprint</span>
+        </div>
         <div class="user-area">
           <span>{{ authStore.user?.nickname || authStore.user?.username }}</span>
-          <a-button size="small" @click="handleLogout">退出</a-button>
+          <a-button class="soft-outline-button" size="small" @click="handleLogout">退出</a-button>
         </div>
       </a-layout-header>
       <a-layout-content class="app-content">
