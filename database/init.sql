@@ -19,16 +19,30 @@ CREATE TABLE IF NOT EXISTS sys_user (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS project (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(100) NOT NULL,
+  description VARCHAR(255) DEFAULT NULL,
+  owner_nickname VARCHAR(50) DEFAULT NULL,
+  creator_id BIGINT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_project_creator (creator_id)
+);
+
 CREATE TABLE IF NOT EXISTS user_story (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  project_id BIGINT NOT NULL,
   title VARCHAR(100) NOT NULL,
   description TEXT,
   story_point DECIMAL(4,1) NOT NULL,
   priority INT NOT NULL DEFAULT 999,
   status VARCHAR(30) NOT NULL DEFAULT 'TODO',
+  owner_nickname VARCHAR(50) DEFAULT NULL,
   creator_id BIGINT NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_story_project (project_id),
   INDEX idx_story_creator (creator_id),
   INDEX idx_story_status (status),
   INDEX idx_story_priority (priority)
@@ -36,14 +50,17 @@ CREATE TABLE IF NOT EXISTS user_story (
 
 CREATE TABLE IF NOT EXISTS sprint (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  project_id BIGINT NOT NULL,
   name VARCHAR(100) NOT NULL,
   goal VARCHAR(255) DEFAULT NULL,
   start_date DATE NOT NULL,
   end_date DATE NOT NULL,
   status VARCHAR(30) NOT NULL DEFAULT 'PLANNED',
+  owner_nickname VARCHAR(50) DEFAULT NULL,
   creator_id BIGINT NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_sprint_project (project_id),
   INDEX idx_sprint_creator (creator_id),
   INDEX idx_sprint_status (status)
 );
@@ -69,6 +86,19 @@ CREATE TABLE IF NOT EXISTS story_status_log (
   INDEX idx_ssl_sprint (sprint_id),
   INDEX idx_ssl_story (story_id),
   INDEX idx_ssl_changed_at (changed_at)
+);
+
+CREATE TABLE IF NOT EXISTS collaboration_member (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  target_type VARCHAR(30) NOT NULL,
+  target_id BIGINT NOT NULL,
+  nickname VARCHAR(50) NOT NULL,
+  role VARCHAR(30) NOT NULL DEFAULT 'MEMBER',
+  creator_id BIGINT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_member_target (target_type, target_id),
+  INDEX idx_member_creator (creator_id)
 );
 
 CREATE TABLE IF NOT EXISTS task (

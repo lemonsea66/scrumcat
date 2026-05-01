@@ -6,9 +6,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class UserStoryRequest {
+
+    @NotNull(message = "项目空间不能为空")
+    private Long projectId;
 
     @NotBlank(message = "标题不能为空")
     private String title;
@@ -23,4 +27,8 @@ public class UserStoryRequest {
     private Integer priority;
 
     private String status;
+
+    private String ownerNickname;
+
+    private List<String> members;
 }

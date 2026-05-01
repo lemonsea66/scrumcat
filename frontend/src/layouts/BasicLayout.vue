@@ -4,9 +4,10 @@
       <div class="sidebar-brand">ScrumCat</div>
       <a-menu :selectedKeys="[route.path]" mode="inline" class="sidebar-menu">
         <a-menu-item key="/dashboard" @click="go('/dashboard')">工作台</a-menu-item>
+        <a-menu-item key="/projects" @click="go('/projects')">项目空间</a-menu-item>
         <a-menu-item key="/stories" @click="go('/stories')">用户故事</a-menu-item>
-        <a-menu-item key="/backlog" disabled>产品待办</a-menu-item>
-        <a-menu-item key="/sprints" disabled>迭代计划</a-menu-item>
+        <a-menu-item key="/backlog" @click="go('/backlog')">产品待办</a-menu-item>
+        <a-menu-item key="/sprints" @click="go('/sprints')">迭代计划</a-menu-item>
         <a-menu-item key="/sprint-board" disabled>故事看板</a-menu-item>
         <a-menu-item key="/task-board" disabled>任务看板</a-menu-item>
         <a-menu-item key="/analytics" disabled>统计分析</a-menu-item>
@@ -17,7 +18,7 @@
       <a-layout-header class="app-header">
         <div class="stage">
           <span class="paw-mark" aria-hidden="true"></span>
-          <span>温柔整理每一个 Sprint</span>
+          <span>{{ projectStore.currentProjectName || '先选择一个项目空间' }}</span>
         </div>
         <div class="user-area">
           <span>{{ authStore.user?.nickname || authStore.user?.username }}</span>
@@ -34,10 +35,12 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { useProjectStore } from '../stores/project'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const projectStore = useProjectStore()
 
 function go(path) {
   router.push(path)

@@ -1,7 +1,7 @@
 import request from './request'
 
-export function fetchStoriesApi() {
-  return request.get('/stories')
+export function fetchStoriesApi(projectId) {
+  return request.get('/stories', { params: projectId ? { projectId } : {} })
 }
 
 export function createStoryApi(data) {

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserStoryService {
 
-    List<UserStoryVO> listCurrentUserStories();
+    List<UserStoryVO> listCurrentUserStories(Long projectId);
 
     UserStoryVO createStory(UserStoryRequest request);
 

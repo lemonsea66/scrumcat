@@ -2,30 +2,32 @@ package com.scrumcat.vo;
 
 import lombok.Data;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class UserStoryVO {
+public class SprintVO {
 
     private Long id;
 
     private Long projectId;
 
-    private String title;
+    private String name;
 
-    private String description;
+    private String goal;
 
-    private BigDecimal storyPoint;
+    private LocalDate startDate;
 
-    private Integer priority;
+    private LocalDate endDate;
 
     private String status;
 
     private String ownerNickname;
 
     private List<String> members;
+
+    private Integer storyCount;
 
     private LocalDateTime createdAt;
 

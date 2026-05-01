@@ -6,10 +6,16 @@
         <h1>用户故事管理</h1>
         <p class="summary">{{ storySummary }}</p>
       </div>
-      <a-button type="primary" @click="openCreateModal">新增用户故事</a-button>
+      <a-button v-if="projectStore.hasProject" type="primary" @click="openCreateModal">新增用户故事</a-button>
+    </div>
+
+    <div v-if="!projectStore.hasProject" class="soft-empty project-required">
+      请先选择一个项目空间，再管理用户故事。
+      <a-button type="primary" @click="router.push('/projects')">去选择项目</a-button>
     </div>
 
     <a-table
+      v-else
       :columns="columns"
       :data-source="stories"
       :loading="loading"
@@ -17,11 +23,20 @@
       row-key="id"
     >
       <template #emptyText>
-        <div class="story-empty-state">还没有用户故事，猫猫在等你的第一个需求。</div>
+        <div class="story-empty-state">当前项目还没有用户故事，猫猫在等你的第一个需求。</div>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'storyPoint'">
           <a-tag color="blue">{{ record.storyPoint }}</a-tag>
+        </template>
+        <template v-else-if="column.key === 'ownerNickname'">
+          <span>{{ record.ownerNickname || '-' }}</span>
+        </template>
+        <template v-else-if="column.key === 'members'">
+          <a-space wrap>
+            <a-tag v-for="member in record.members" :key="member">{{ member }}</a-tag>
+            <span v-if="!record.members?.length">-</span>
+          </a-space>
         </template>
         <template v-else-if="column.key === 'status'">
           <a-select
@@ -73,6 +88,12 @@
         <a-form-item label="优先级" required>
           <a-input-number v-model:value="form.priority" :min="1" style="width: 100%" />
         </a-form-item>
+        <a-form-item label="需求负责人昵称">
+          <a-input v-model:value="form.ownerNickname" placeholder="柠檬" />
+        </a-form-item>
+        <a-form-item label="协作成员昵称">
+          <a-select v-model:value="form.members" mode="tags" placeholder="输入昵称后回车" style="width: 100%" />
+        </a-form-item>
         <a-form-item label="状态">
           <a-select v-model:value="form.status">
             <a-select-option value="TODO">未开始</a-select-option>
@@ -86,8 +107,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { message } from 'ant-design-vue'
+import { useRouter } from 'vue-router'
+import { useProjectStore } from '../stores/project'
 import {
   createStoryApi,
   deleteStoryApi,
@@ -96,11 +119,15 @@ import {
   updateStoryStatusApi
 } from '../api/story'
 
+const router = useRouter()
+const projectStore = useProjectStore()
 const storyPointOptions = [0.5, 1, 2, 3, 5, 8, 20, 40]
 const columns = [
   { title: '标题', dataIndex: 'title', key: 'title' },
-  { title: '故事点', dataIndex: 'storyPoint', key: 'storyPoint', width: 110 },
+  { title: '故事点', dataIndex: 'storyPoint', key: 'storyPoint', width: 100 },
   { title: '优先级', dataIndex: 'priority', key: 'priority', width: 100 },
+  { title: '负责人', dataIndex: 'ownerNickname', key: 'ownerNickname', width: 120 },
+  { title: '协作成员', dataIndex: 'members', key: 'members', width: 180 },
   { title: '状态', dataIndex: 'status', key: 'status', width: 150 },
   { title: '操作', key: 'actions', width: 160 }
 ]
@@ -114,22 +141,32 @@ const form = reactive({
   description: '',
   storyPoint: 1,
   priority: 1,
-  status: 'TODO'
+  status: 'TODO',
+  ownerNickname: '',
+  members: []
 })
 
 onMounted(loadStories)
+watch(() => projectStore.currentProjectId, loadStories)
 
 const storySummary = computed(() => {
-  if (stories.value.length === 0) {
-    return '还没有用户故事，猫猫在等你的第一个需求。'
+  if (!projectStore.hasProject) {
+    return '选择项目空间后，这里只展示该项目下的用户故事。'
   }
-  return `已整理 ${stories.value.length} 个用户故事，可以继续补充、编辑和调整状态。`
+  if (stories.value.length === 0) {
+    return `${projectStore.currentProjectName} 还没有用户故事。`
+  }
+  return `${projectStore.currentProjectName} 已整理 ${stories.value.length} 个用户故事。`
 })
 
 async function loadStories() {
+  if (!projectStore.hasProject) {
+    stories.value = []
+    return
+  }
   loading.value = true
   try {
-    const response = await fetchStoriesApi()
+    const response = await fetchStoriesApi(projectStore.currentProjectId)
     stories.value = response.data || []
   } catch (error) {
     message.error(error.message || '用户故事加载失败')
@@ -145,7 +182,9 @@ function openCreateModal() {
     description: '',
     storyPoint: 1,
     priority: stories.value.length + 1,
-    status: 'TODO'
+    status: 'TODO',
+    ownerNickname: '',
+    members: []
   })
   modalOpen.value = true
 }
@@ -157,7 +196,9 @@ function openEditModal(story) {
     description: story.description,
     storyPoint: Number(story.storyPoint),
     priority: story.priority,
-    status: story.status
+    status: story.status,
+    ownerNickname: story.ownerNickname,
+    members: [...(story.members || [])]
   })
   modalOpen.value = true
 }
@@ -173,11 +214,14 @@ async function handleSubmit() {
   }
 
   const payload = {
+    projectId: projectStore.currentProjectId,
     title: form.title,
     description: form.description,
     storyPoint: Number(form.storyPoint),
     priority: Number(form.priority),
-    status: form.status
+    status: form.status,
+    ownerNickname: form.ownerNickname,
+    members: form.members || []
   }
 
   try {

@@ -5,27 +5,18 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("user_story")
-public class UserStory {
+@TableName("project")
+public class Project {
 
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    private Long projectId;
-
-    private String title;
+    private String name;
 
     private String description;
-
-    private BigDecimal storyPoint;
-
-    private Integer priority;
-
-    private String status;
 
     private String ownerNickname;
 

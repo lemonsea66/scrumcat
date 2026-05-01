@@ -4,6 +4,9 @@ import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import StoryView from '../views/StoryView.vue'
+import BacklogView from '../views/BacklogView.vue'
+import SprintView from '../views/SprintView.vue'
+import ProjectView from '../views/ProjectView.vue'
 import { useAuthStore } from '../stores/auth'
 
 const routes = [
@@ -34,6 +37,24 @@ const routes = [
         path: 'stories',
         name: 'stories',
         component: StoryView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'projects',
+        name: 'projects',
+        component: ProjectView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'backlog',
+        name: 'backlog',
+        component: BacklogView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'sprints',
+        name: 'sprints',
+        component: SprintView,
         meta: { requiresAuth: true }
       }
     ]
