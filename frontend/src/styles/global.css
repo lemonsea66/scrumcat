@@ -271,6 +271,23 @@ h1 {
   gap: 18px;
 }
 
+.analytics-page {
+  max-width: 1440px;
+}
+
+.dashboard-control-card .ant-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dashboard-control-card strong {
+  display: block;
+  color: var(--color-text);
+  font-size: 18px;
+}
+
 .workbench-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 260px;
@@ -438,6 +455,18 @@ h1 {
 
 .chart-card .ant-card-body {
   min-height: 304px;
+}
+
+.analytics-burndown-card .chart-box {
+  height: 320px;
+}
+
+.dashboard-burndown-card .ant-card-body {
+  min-height: 244px;
+}
+
+.dashboard-burndown-card .chart-box {
+  height: 190px;
 }
 
 .chart-box {
@@ -1254,6 +1283,11 @@ h1 {
   }
 
   .sprint-cat-card .ant-card-body {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboard-control-card .ant-card-body {
     align-items: flex-start;
     flex-direction: column;
   }

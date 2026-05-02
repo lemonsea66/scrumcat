@@ -22,6 +22,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/api/sprints/**",
                         "/api/sprint-board/**",
                         "/api/task-board/**",
-                        "/api/tasks/**");
+                        "/api/tasks/**",
+                        "/api/burndown/**",
+                        "/api/analytics/**",
+                        "/api/dashboard/**");
     }
 }

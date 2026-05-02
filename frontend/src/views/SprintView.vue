@@ -145,9 +145,11 @@ import {
   updateSprintApi
 } from '../api/sprint'
 import { useProjectStore } from '../stores/project'
+import { useSprintSelectionStore } from '../stores/sprintSelection'
 
 const router = useRouter()
 const projectStore = useProjectStore()
+const sprintSelectionStore = useSprintSelectionStore()
 const statusMeta = {
   PLANNED: { label: '计划中', color: 'gold' },
   ACTIVE: { label: '进行中', color: 'blue' },
@@ -163,7 +165,6 @@ const statusMetaStory = {
 const sprints = ref([])
 const backlogStories = ref([])
 const sprintStories = ref([])
-const currentSprintId = ref(null)
 const draggedStoryId = ref(null)
 const modalOpen = ref(false)
 const editingSprint = ref(null)
@@ -182,6 +183,16 @@ watch(() => projectStore.currentProjectId, loadPageData)
 const currentSprint = computed(() =>
   sprints.value.find((sprint) => sprint.id === currentSprintId.value)
 )
+
+const currentSprintId = computed({
+  get: () => sprintSelectionStore.getSprintId(projectStore.currentProjectId),
+  set: (id) => {
+    const sprint = sprints.value.find((item) => item.id === id)
+    if (sprint) {
+      sprintSelectionStore.selectSprint(projectStore.currentProjectId, sprint)
+    }
+  }
+})
 
 const sprintOptions = computed(() =>
   sprints.value.map((sprint) => ({
@@ -210,7 +221,6 @@ async function loadPageData() {
     sprints.value = []
     backlogStories.value = []
     sprintStories.value = []
-    currentSprintId.value = null
     return
   }
   await Promise.all([loadSprints(), loadBacklog()])
@@ -220,12 +230,20 @@ async function loadSprints() {
   try {
     const response = await fetchSprintsApi(projectStore.currentProjectId)
     sprints.value = response.data || []
-    if (!sprints.value.some((sprint) => sprint.id === currentSprintId.value)) {
-      currentSprintId.value = sprints.value[0]?.id || null
-    }
+    syncSelectedSprint()
     await loadSprintStories()
   } catch (error) {
     message.error(error.message || 'Sprint 加载失败')
+  }
+}
+
+function syncSelectedSprint() {
+  if (!sprints.value.length) {
+    sprintSelectionStore.clearSprint(projectStore.currentProjectId)
+    return
+  }
+  if (!sprints.value.some((sprint) => sprint.id === currentSprintId.value)) {
+    sprintSelectionStore.selectSprint(projectStore.currentProjectId, sprints.value[0])
   }
 }
 
@@ -302,7 +320,9 @@ async function handleSubmitSprint() {
       message.success('Sprint 已更新')
     } else {
       const response = await createSprintApi(payload)
-      currentSprintId.value = response.data?.id || null
+      if (response.data?.id) {
+        sprintSelectionStore.selectSprint(projectStore.currentProjectId, response.data)
+      }
       message.success('Sprint 已创建')
     }
     closeModal()
@@ -320,7 +340,6 @@ async function handleDeleteSprint() {
   try {
     await deleteSprintApi(currentSprint.value.id)
     message.success('Sprint 已删除')
-    currentSprintId.value = null
     sprintStories.value = []
     await loadSprints()
   } catch (error) {

@@ -109,9 +109,11 @@ import TaskDrawer from '../components/TaskDrawer.vue'
 import { fetchSprintsApi } from '../api/sprint'
 import { fetchSprintBoardApi, updateSprintBoardStoryStatusApi } from '../api/sprintBoard'
 import { useProjectStore } from '../stores/project'
+import { useSprintSelectionStore } from '../stores/sprintSelection'
 
 const router = useRouter()
 const projectStore = useProjectStore()
+const sprintSelectionStore = useSprintSelectionStore()
 const statusMetaSprint = {
   PLANNED: { label: '计划中' },
   ACTIVE: { label: '进行中' },
@@ -129,7 +131,6 @@ const columns = [
 ]
 
 const sprints = ref([])
-const currentSprintId = ref(null)
 const loading = ref(false)
 const drawerOpen = ref(false)
 const selectedStory = ref(null)
@@ -146,6 +147,16 @@ watch(() => projectStore.currentProjectId, loadPageData)
 const currentSprint = computed(() =>
   sprints.value.find((sprint) => sprint.id === currentSprintId.value)
 )
+
+const currentSprintId = computed({
+  get: () => sprintSelectionStore.getSprintId(projectStore.currentProjectId),
+  set: (id) => {
+    const sprint = sprints.value.find((item) => item.id === id)
+    if (sprint) {
+      sprintSelectionStore.selectSprint(projectStore.currentProjectId, sprint)
+    }
+  }
+})
 
 const sprintOptions = computed(() =>
   sprints.value.map((sprint) => ({
@@ -170,18 +181,25 @@ async function loadPageData() {
   resetBoard()
   if (!projectStore.hasProject) {
     sprints.value = []
-    currentSprintId.value = null
     return
   }
   try {
     const response = await fetchSprintsApi(projectStore.currentProjectId)
     sprints.value = response.data || []
-    if (!sprints.value.some((sprint) => sprint.id === currentSprintId.value)) {
-      currentSprintId.value = sprints.value[0]?.id || null
-    }
+    syncSelectedSprint()
     await loadBoard()
   } catch (error) {
     message.error(error.message || 'Sprint 加载失败')
+  }
+}
+
+function syncSelectedSprint() {
+  if (!sprints.value.length) {
+    sprintSelectionStore.clearSprint(projectStore.currentProjectId)
+    return
+  }
+  if (!sprints.value.some((sprint) => sprint.id === currentSprintId.value)) {
+    sprintSelectionStore.selectSprint(projectStore.currentProjectId, sprints.value[0])
   }
 }
 

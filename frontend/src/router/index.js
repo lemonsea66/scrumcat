@@ -9,6 +9,7 @@ import SprintView from '../views/SprintView.vue'
 import ProjectView from '../views/ProjectView.vue'
 import SprintBoardView from '../views/SprintBoardView.vue'
 import TaskBoardView from '../views/TaskBoardView.vue'
+import AnalyticsView from '../views/AnalyticsView.vue'
 import { useAuthStore } from '../stores/auth'
 
 const routes = [
@@ -69,6 +70,12 @@ const routes = [
         path: 'task-board',
         name: 'task-board',
         component: TaskBoardView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'analytics',
+        name: 'analytics',
+        component: AnalyticsView,
         meta: { requiresAuth: true }
       }
     ]
