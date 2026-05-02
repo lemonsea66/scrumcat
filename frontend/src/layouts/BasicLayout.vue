@@ -8,8 +8,8 @@
         <a-menu-item key="/stories" @click="go('/stories')">用户故事</a-menu-item>
         <a-menu-item key="/backlog" @click="go('/backlog')">产品待办</a-menu-item>
         <a-menu-item key="/sprints" @click="go('/sprints')">迭代计划</a-menu-item>
-        <a-menu-item key="/sprint-board" disabled>故事看板</a-menu-item>
-        <a-menu-item key="/task-board" disabled>任务看板</a-menu-item>
+        <a-menu-item key="/sprint-board" @click="go('/sprint-board')">故事看板</a-menu-item>
+        <a-menu-item key="/task-board" @click="go('/task-board')">任务看板</a-menu-item>
         <a-menu-item key="/analytics" disabled>统计分析</a-menu-item>
         <a-menu-item key="/review" disabled>复盘中心</a-menu-item>
       </a-menu>

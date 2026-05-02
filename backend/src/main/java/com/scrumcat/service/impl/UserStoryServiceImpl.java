@@ -8,6 +8,10 @@ import com.scrumcat.entity.UserStory;
 import com.scrumcat.exception.BusinessException;
 import com.scrumcat.entity.Project;
 import com.scrumcat.mapper.ProjectMapper;
+import com.scrumcat.entity.SprintStory;
+import com.scrumcat.entity.Task;
+import com.scrumcat.mapper.SprintStoryMapper;
+import com.scrumcat.mapper.TaskMapper;
 import com.scrumcat.mapper.UserStoryMapper;
 import com.scrumcat.service.UserStoryService;
 import com.scrumcat.vo.UserStoryVO;
@@ -26,6 +30,8 @@ public class UserStoryServiceImpl implements UserStoryService {
     private final UserStoryMapper userStoryMapper;
     private final ProjectMapper projectMapper;
     private final CollaborationMemberSupport memberSupport;
+    private final SprintStoryMapper sprintStoryMapper;
+    private final TaskMapper taskMapper;
 
     @Override
     public List<UserStoryVO> listCurrentUserStories(Long projectId) {
@@ -83,6 +89,10 @@ public class UserStoryServiceImpl implements UserStoryService {
     @Override
     public void deleteStory(Long id) {
         UserStory story = getCurrentUserStory(id);
+        sprintStoryMapper.delete(new LambdaQueryWrapper<SprintStory>()
+                .eq(SprintStory::getStoryId, story.getId()));
+        taskMapper.delete(new LambdaQueryWrapper<Task>()
+                .eq(Task::getStoryId, story.getId()));
         memberSupport.deleteMembers(CollaborationMemberSupport.STORY, story.getId());
         userStoryMapper.deleteById(story.getId());
     }

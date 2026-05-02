@@ -7,6 +7,8 @@ import StoryView from '../views/StoryView.vue'
 import BacklogView from '../views/BacklogView.vue'
 import SprintView from '../views/SprintView.vue'
 import ProjectView from '../views/ProjectView.vue'
+import SprintBoardView from '../views/SprintBoardView.vue'
+import TaskBoardView from '../views/TaskBoardView.vue'
 import { useAuthStore } from '../stores/auth'
 
 const routes = [
@@ -55,6 +57,18 @@ const routes = [
         path: 'sprints',
         name: 'sprints',
         component: SprintView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'sprint-board',
+        name: 'sprint-board',
+        component: SprintBoardView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'task-board',
+        name: 'task-board',
+        component: TaskBoardView,
         meta: { requiresAuth: true }
       }
     ]
